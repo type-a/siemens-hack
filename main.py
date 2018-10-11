@@ -5,6 +5,8 @@ import threading
 import requests
 import wget
 import requests, zipfile, io
+from datetime import datetime
+
 app = Flask(__name__)
 
 neighbours = []
@@ -32,6 +34,11 @@ def get_latest_code():
 @app.route("/get_code", methods=["GET"])
 def get_code(time_n):
     return send_file(os.path.join("http://" + host + "files", time_n + ".zip"), as_attachment=True)
+
+@app.route("/upload_code", methods=["POST"])
+def upload_code():
+    f = request.files['file']
+    f.save("files/"+str(int(datetime.now().timestamp()))+".zip")
     
 def stop_software():
     os.system("killall -9 code")
@@ -45,6 +52,7 @@ def restart_software():
     z = zipfile.ZipFile("files/"+get_latest_time()+".zip", 'r')
     z.extractall("current")
     z.close()
+    os.system("chmod 777 current/code")
     start_software()
 
 def tick():
