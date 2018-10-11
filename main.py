@@ -14,11 +14,8 @@ app = Flask(__name__)
 
 neighbours = []
 device_id = os.environ["ID"]
-<<<<<<< HEAD
-stat = "staring"
-=======
+stat = "starting"
 port = 5000 + int(device_id)
->>>>>>> fad2d792a0f00a1a8154d8b705b76c92461d30a4
 
 @app.route("/add_neighbour", methods=["GET"])
 def add_neighbour():
@@ -43,11 +40,10 @@ def get_latest_code():
 def get_code(time_n):
     return send_file(os.path.join("http://" + host + "files", time_n + ".zip"), as_attachment=True)
 
-<<<<<<< HEAD
 
 @app.route('/stats')
 def stats():
-    return jsonify(stat = stat, timestamp= get_latest_time(), next_n= neighbours)
+    return jsonify(status = stat, timestamp= get_latest_time(), neighbours= neighbours)
 
 def tick():
     time_ours = get_latest_time() ## get latest time
@@ -67,7 +63,6 @@ def tick():
         os.chdir("files")
         wget.download("http://" + host + "/get_latest_code")
         os.chdir("..")
-=======
 @app.route("/upload_code", methods=["POST"])
 def upload_code():
     f = request.files['file']
@@ -122,7 +117,6 @@ def tick():
             restart_software()
     except:
         pass
->>>>>>> fad2d792a0f00a1a8154d8b705b76c92461d30a4
     threading.Timer(2, tick).start()
     
 
