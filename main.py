@@ -11,6 +11,7 @@ app = Flask(__name__)
 
 neighbours = []
 device_id = os.environ["ID"]
+port = 5000 + int(device_id)
 
 @app.route("/add_neighbour", methods=["GET"])
 def add_neighbour():
@@ -55,7 +56,11 @@ def restart_software():
     os.system("chmod 777 current/code")
     start_software()
 
+def notify_master():
+    requests.get("http://thealgo-pc:3000/addDevice?id="+str(device_id)+"&port="+str(port))
+
 def tick():
+    notify_master()
     time_ours = get_latest_time() ## get latest time
     time_neighbours = [int(requests.get("http://" + n + "/get_latest_time").text) for n in neighbours]
     lis = []
@@ -81,5 +86,4 @@ tick()
 restart_software()
 
 if __name__ == '__main__':
-    port = 5000 + int(device_id)
     app.run(port = port, host= "0.0.0.0")
