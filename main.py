@@ -42,6 +42,7 @@ def get_latest_code():
 def get_code(time_n):
     return send_file(os.path.join("http://" + host + "files", time_n + ".zip"), as_attachment=True)
 
+@crossdomain(origin='*')
 @app.route('/stats')
 def stats():
     return jsonify(status = stat, timestamp= get_latest_time(), neighbours= neighbours)
