@@ -34,6 +34,18 @@ def get_code(time_n):
     return send_file(os.path.join("http://" + host + "files", time_n + ".zip"), as_attachment=True)
     
 def stop_software():
+    os.system("killall -9 code")
+
+def start_software():
+    os.system("cd current; ./code &")
+
+def restart():
+    stop_software()
+    os.system("rm -rf current/*")
+    z = zipfile.ZipFile("files/"+get_latest_time()+".zip", 'r')
+    z.extractall("current")
+    z.close()
+    start_software()
 
 def tick():
     time_ours = get_latest_time() ## get latest time
@@ -52,11 +64,13 @@ def tick():
         os.chdir("files")
         wget.download("http://" + host + "/get_latest_code")
         os.chdir("..")
+        restart()
     threading.Timer(2, tick).start()
     
 
 
 tick()
+start_software()
 
 if __name__ == '__main__':
     port = 5000 + int(device_id)
