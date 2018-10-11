@@ -39,7 +39,7 @@ def stop_software():
 def start_software():
     os.system("cd current; ./code &")
 
-def restart():
+def restart_software():
     stop_software()
     os.system("rm -rf current/*")
     z = zipfile.ZipFile("files/"+get_latest_time()+".zip", 'r')
@@ -64,13 +64,13 @@ def tick():
         os.chdir("files")
         wget.download("http://" + host + "/get_latest_code")
         os.chdir("..")
-        restart()
+        restart_software()
     threading.Timer(2, tick).start()
     
 
 
 tick()
-start_software()
+restart_software()
 
 if __name__ == '__main__':
     port = 5000 + int(device_id)
