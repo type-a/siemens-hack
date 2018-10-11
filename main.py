@@ -42,7 +42,6 @@ def get_latest_code():
 def get_code(time_n):
     return send_file(os.path.join("http://" + host + "files", time_n + ".zip"), as_attachment=True)
 
-@crossdomain(origin='*')
 @app.route('/stats')
 def stats():
     return jsonify(status = stat, timestamp= get_latest_time(), neighbours= neighbours)
@@ -126,6 +125,13 @@ def tick():
 
 tick()
 restart_software()
+
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  return response
 
 if __name__ == '__main__':
     app.run(port = port, host= "0.0.0.0")
