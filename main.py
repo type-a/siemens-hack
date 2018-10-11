@@ -40,13 +40,11 @@ def get_code(time_n):
 
 @app.route("/upload_code", methods=["POST"])
 def upload_code():
-    try:
-        f = request.files['file']
-        filename = "files/"+str(int(datetime.now().timestamp()))+".zip"
-        print(filename)
-        print(f)
-        f.save(secure_filename(filename))
-    except Error
+    f = request.files['file']
+    filename = "files/"+str(int(datetime.now().timestamp()))+".zip"
+    print(filename)
+    print(f)
+    f.save(secure_filename(filename))
     
 def stop_software():
     os.system("killall -9 code")
