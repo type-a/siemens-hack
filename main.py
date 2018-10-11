@@ -5,11 +5,20 @@ import threading
 import requests
 import wget
 import requests, zipfile, io
+from datetime import datetime
+from werkzeug.utils import secure_filename
+
+
 app = Flask(__name__)
+#app.config['UPLOAD_FOLDER'] = 'uploads'
 
 neighbours = []
 device_id = os.environ["ID"]
+<<<<<<< HEAD
 stat = "staring"
+=======
+port = 5000 + int(device_id)
+>>>>>>> fad2d792a0f00a1a8154d8b705b76c92461d30a4
 
 @app.route("/add_neighbour", methods=["GET"])
 def add_neighbour():
@@ -34,6 +43,7 @@ def get_latest_code():
 def get_code(time_n):
     return send_file(os.path.join("http://" + host + "files", time_n + ".zip"), as_attachment=True)
 
+<<<<<<< HEAD
 
 @app.route('/stats')
 def stats():
@@ -57,12 +67,68 @@ def tick():
         os.chdir("files")
         wget.download("http://" + host + "/get_latest_code")
         os.chdir("..")
+=======
+@app.route("/upload_code", methods=["POST"])
+def upload_code():
+    f = request.files['file']
+    #print(datetime.now().timestamp())
+    filename = str(int(time.time()))+".zip"
+    print(filename)
+    print(f)
+    #f.save(secure_filename(filename))
+    path=(os.path.join("files", secure_filename(filename)))
+    print(path)
+    f.save(path)
+    restart_software()
+    return jsonify(success=True)
+    
+def stop_software():
+    os.system("killall -9 code")
+
+def start_software():
+    os.system("cd current; ./code &")
+
+def restart_software():
+    stop_software()
+    os.system("rm -rf current/*")
+    z = zipfile.ZipFile("files/"+get_latest_time()+".zip", 'r')
+    z.extractall("current")
+    z.close()
+    os.system("chmod 777 current/code")
+    start_software()
+
+def notify_master():
+    requests.get("http://thealgo-pc:3000/addDevice?id="+str(device_id)+"&port="+str(port))
+
+def tick():
+    try:
+        notify_master()
+        time_ours = get_latest_time() ## get latest time
+        time_neighbours = [int(requests.get("http://" + n + "/get_latest_time").text) for n in neighbours]
+        lis = []
+        for n in neighbours:
+            lis.append([int(requests.get("http://" + n + "/get_latest_time").text), n])
+        time = 0
+        host = "0"
+        for dat in lis:
+            if dat[0] > time:
+                host = dat[1]
+                time = dat[0]
+        print(host)
+        if int(time_ours) < int(time):
+            os.chdir("files")
+            wget.download("http://" + host + "/get_latest_code")
+            os.chdir("..")
+            restart_software()
+    except:
+        pass
+>>>>>>> fad2d792a0f00a1a8154d8b705b76c92461d30a4
     threading.Timer(2, tick).start()
     
 
 
 tick()
+restart_software()
 
 if __name__ == '__main__':
-    port = 5000 + int(device_id)
     app.run(port = port, host= "0.0.0.0")
