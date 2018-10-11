@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, jsonify
 import os
 import time
 import threading
@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 neighbours = []
 device_id = os.environ["ID"]
+stat = "staring"
 
 @app.route("/add_neighbour", methods=["GET"])
 def add_neighbour():
@@ -32,8 +33,11 @@ def get_latest_code():
 @app.route("/get_code", methods=["GET"])
 def get_code(time_n):
     return send_file(os.path.join("http://" + host + "files", time_n + ".zip"), as_attachment=True)
-    
-def stop_software():
+
+
+@app.route('/stats')
+def stats():
+    return jsonify(stat = stat, timestamp= get_latest_time(), next_n= neighbours)
 
 def tick():
     time_ours = get_latest_time() ## get latest time
@@ -49,6 +53,7 @@ def tick():
             time = dat[0]
     print(host)
     if int(time_ours) < int(time):
+        stat = "Updating"
         os.chdir("files")
         wget.download("http://" + host + "/get_latest_code")
         os.chdir("..")
