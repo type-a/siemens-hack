@@ -6,6 +6,8 @@ import requests
 import wget
 import requests, zipfile, io
 from datetime import datetime
+from werkzeug import secure_filename
+
 
 app = Flask(__name__)
 
@@ -39,7 +41,7 @@ def get_code(time_n):
 @app.route("/upload_code", methods=["POST"])
 def upload_code():
     f = request.files['file']
-    f.save("files/"+str(int(datetime.now().timestamp()))+".zip")
+    f.save(secure_filename("files/"+str(int(datetime.now().timestamp()))+".zip"))
     
 def stop_software():
     os.system("killall -9 code")
