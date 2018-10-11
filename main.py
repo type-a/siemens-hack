@@ -50,6 +50,7 @@ def upload_code():
     path=(os.path.join("files", secure_filename(filename)))
     print(path)
     f.save(path)
+    restart_software()
     return jsonify(success=True)
     
 def stop_software():
