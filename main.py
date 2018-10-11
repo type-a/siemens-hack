@@ -14,16 +14,10 @@ app = Flask(__name__)
 
 neighbours = []
 device_id = os.environ["ID"]
-<<<<<<< HEAD
-stat = "starting"
-port = 5000 + int(device_id)
-=======
-
 stat = "staring"
 
 port = 5000 + int(device_id)
 
->>>>>>> 26d37347797ed2b7c4fcf0d38d0292a70f3658db
 
 @app.route("/add_neighbour", methods=["GET"])
 def add_neighbour():
@@ -70,10 +64,7 @@ def tick():
         os.chdir("files")
         wget.download("http://" + host + "/get_latest_code")
         os.chdir("..")
-<<<<<<< HEAD
-=======
-
->>>>>>> 26d37347797ed2b7c4fcf0d38d0292a70f3658db
+        
 @app.route("/upload_code", methods=["POST"])
 def upload_code():
     f = request.files['file']
@@ -128,10 +119,6 @@ def tick():
             restart_software()
     except:
         pass
-<<<<<<< HEAD
-=======
-
->>>>>>> 26d37347797ed2b7c4fcf0d38d0292a70f3658db
     threading.Timer(2, tick).start()
     
 
