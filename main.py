@@ -111,7 +111,7 @@ def tick():
             if dat[0] > time:
                 host = dat[1]
                 time = dat[0]
-        print(host)
+        # print(host)
         if int(time_ours) < int(time):
             os.chdir("files")
             wget.download("http://" + host + "/get_latest_code")
